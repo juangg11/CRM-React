@@ -166,14 +166,11 @@ function CitasPanel({ citas, titulo, onFinalizar }) {
 function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
     const today = new Date();
 
-    // Primer día del mes y cuántos días tiene
     const firstDay = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    // Offset: lunes=0
     let startOffset = firstDay.getDay() - 1;
     if (startOffset < 0) startOffset = 6;
 
-    // Mapa fecha→citas para el mes
     const citasByDay = useMemo(() => {
         const map = {};
         appointments.forEach((c) => {
@@ -185,7 +182,6 @@ function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
     }, [appointments]);
 
     const cells = [];
-    // Celdas vacías iniciales
     for (let i = 0; i < startOffset; i++) cells.push(null);
     for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
@@ -317,25 +313,21 @@ export default function AppointmentsPage() {
     const [citaSeleccionada, setCitaSeleccionada] = useState(null);
     const [mostrarNuevaCita, setMostrarNuevaCita] = useState(false);
 
-    // Navegación calendario
     const today = new Date();
-    const [viewMode, setViewMode] = useState('month'); // 'month' | 'week'
-    const [currentDate, setCurrentDate] = useState(today); // referencia del mes/semana actual
+    const [viewMode, setViewMode] = useState('month');
+    const [currentDate, setCurrentDate] = useState(today);
     const [selectedDay, setSelectedDay] = useState(today);
 
-    // Derivados
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const weekStart = startOfWeek(currentDate);
 
-    // Citas del día seleccionado
     const citasDelDia = useMemo(() => {
         if (!selectedDay) return [];
         const key = isoDate(selectedDay);
         return appointments.filter((c) => isoDate(c.appointment_date) === key);
     }, [selectedDay, appointments]);
 
-    // Citas de la semana (para el panel lateral en vista semana)
     const citasDeSemana = useMemo(() => {
         const days = Array.from({ length: 7 }, (_, i) => {
             const d = new Date(weekStart);
@@ -352,11 +344,9 @@ export default function AppointmentsPage() {
         });
     }, [weekStart, appointments]);
 
-    // Navegación mes
     const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
     const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-    // Navegación semana
     const prevWeek = () => {
         const d = new Date(currentDate);
         d.setDate(d.getDate() - 7);
@@ -370,7 +360,6 @@ export default function AppointmentsPage() {
 
     const handleSelectDay = (date) => {
         setSelectedDay(date);
-        // En vista semana, sincronizar currentDate
         if (viewMode === 'week') setCurrentDate(date);
     };
 
@@ -379,7 +368,6 @@ export default function AppointmentsPage() {
         await finalizarCita(cita.id, notas);
     };
 
-    // Título del header
     const headerTitle = viewMode === 'month'
         ? `${MONTHS_ES[month]} ${year}`
         : (() => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import sql from '../../../config/db'; // Importamos el nuevo config
+import sql from '../../../config/db';
 
 export function useAppointments() {
     const [appointments, setAppointments] = useState([]);
@@ -8,7 +8,6 @@ export function useAppointments() {
     const fetchAppointments = async () => {
         try {
             setLoading(true);
-            // SQL Puro: mucho más fácil de entender
             const data = await sql`
         SELECT * FROM appointments 
         WHERE status != 'finalizada'
@@ -28,7 +27,7 @@ export function useAppointments() {
         INSERT INTO appointments (customer_id, client_name, service, appointment_date, appointment_time)
         VALUES (${newAppo.customer_id || null}, ${newAppo.client_name}, ${newAppo.service}, ${newAppo.date}, ${newAppo.time})
       `;
-            fetchAppointments(); // Recargar lista
+            fetchAppointments();
         } catch (error) {
             console.error("Error al crear:", error);
         }
