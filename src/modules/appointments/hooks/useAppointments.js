@@ -25,8 +25,8 @@ export function useAppointments() {
     const createAppointment = async (newAppo) => {
         try {
             await sql`
-        INSERT INTO appointments (client_name, service, appointment_date, appointment_time)
-        VALUES (${newAppo.client_name}, ${newAppo.service}, ${newAppo.date}, ${newAppo.time})
+        INSERT INTO appointments (customer_id, client_name, service, appointment_date, appointment_time)
+        VALUES (${newAppo.customer_id || null}, ${newAppo.client_name}, ${newAppo.service}, ${newAppo.date}, ${newAppo.time})
       `;
             fetchAppointments(); // Recargar lista
         } catch (error) {

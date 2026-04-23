@@ -527,6 +527,7 @@ export default function AppointmentsPage() {
                     onClose={() => setMostrarNuevaCita(false)}
                     onGuardar={createAppointment}
                     defaultDate={selectedDay ? selectedDay.toISOString().split('T')[0] : undefined}
+                    appointments={appointments}
                 />
             )}
         </>
