@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAppointments } from '../hooks/useAppointments';
+import NuevaCitaModal from '../components/NuevaCitaModal';
 import {
     Plus, X, ChevronLeft, ChevronRight,
     Calendar, LayoutGrid, Clock, User
@@ -293,8 +294,9 @@ function WeekView({ weekStart, appointments, selectedDay, onSelectDay }) {
 // ─── Página principal ─────────────────────────────────────────────────────────
 
 export default function AppointmentsPage() {
-    const { appointments, loading, finalizarCita, sumVentas } = useAppointments();
+    const { appointments, loading, createAppointment, finalizarCita, sumVentas } = useAppointments();
     const [citaSeleccionada, setCitaSeleccionada] = useState(null);
+    const [mostrarNuevaCita, setMostrarNuevaCita] = useState(false);
 
     // Navegación calendario
     const today = new Date();
@@ -423,7 +425,9 @@ export default function AppointmentsPage() {
                             </button>
 
                             {/* Nueva cita */}
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-colors">
+                            <button
+                                onClick={() => setMostrarNuevaCita(true)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-colors">
                                 <Plus size={14} /> Nueva cita
                             </button>
                         </div>
@@ -477,6 +481,15 @@ export default function AppointmentsPage() {
                     cita={citaSeleccionada}
                     onClose={() => setCitaSeleccionada(null)}
                     onConfirmar={handleConfirmar}
+                />
+            )}
+
+            {/* Modal nueva cita */}
+            {mostrarNuevaCita && (
+                <NuevaCitaModal
+                    onClose={() => setMostrarNuevaCita(false)}
+                    onGuardar={createAppointment}
+                    defaultDate={selectedDay ? selectedDay.toISOString().split('T')[0] : undefined}
                 />
             )}
         </>
