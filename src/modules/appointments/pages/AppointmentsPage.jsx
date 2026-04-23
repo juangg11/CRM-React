@@ -3,7 +3,7 @@ import { useAppointments } from '../hooks/useAppointments';
 import NuevaCitaModal from '../components/NuevaCitaModal';
 import {
     Plus, X, ChevronLeft, ChevronRight,
-    Calendar, LayoutGrid, Clock, User
+    Calendar, LayoutGrid, Clock, User, Scissors
 } from 'lucide-react';
 
 // ─── Helpers de fecha ─────────────────────────────────────────────────────────
@@ -50,47 +50,53 @@ function FinalizarModal({ cita, onClose, onConfirmar }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+            <div className="relative rounded-2xl shadow-2xl w-full max-w-md p-6 animate-scale-in" style={{ background: 'var(--bg-card)' }}>
                 <div className="flex items-center justify-between mb-5">
                     <div>
-                        <h2 className="text-lg font-bold text-gray-900">Finalizar cita</h2>
-                        <p className="text-sm text-gray-500">{cita.client_name} · {cita.service}</p>
+                        <h2 className="text-lg font-bold" style={{ color: 'var(--text-1)' }}>Finalizar cita</h2>
+                        <p className="text-sm mt-0.5" style={{ color: 'var(--text-3)' }}>{cita.client_name} · {cita.service}</p>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors p-1">
+                    <button onClick={onClose} className="p-1 transition-colors rounded-lg btn-press" style={{ color: 'var(--text-3)' }}
+                        onMouseEnter={e=>e.currentTarget.style.background='var(--bg-hover)'}
+                        onMouseLeave={e=>e.currentTarget.style.background=''}>
                         <X size={20} />
                     </button>
                 </div>
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-3)' }}>
                             Importe cobrado <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">€</span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-medium" style={{ color: 'var(--text-3)' }}>€</span>
                             <input
                                 type="number" min="0" step="0.01" placeholder="0.00"
                                 value={dinero} onChange={(e) => setDinero(e.target.value)} autoFocus
-                                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                                className="input-base theme-ring w-full pl-8 pr-4 py-2.5 rounded-xl text-sm"
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
+                        <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-3)' }}>Notas (opcional)</label>
                         <textarea rows={3} placeholder="Observaciones de la cita…"
                             value={notas} onChange={(e) => setNotas(e.target.value)}
-                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
+                            className="input-base theme-ring w-full px-3 py-2.5 rounded-xl text-sm resize-none"
                         />
                     </div>
                 </div>
                 <div className="flex gap-3 mt-6">
                     <button onClick={onClose}
-                        className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                        className="flex-1 px-4 py-2.5 rounded-xl border text-sm font-semibold btn-press transition-colors"
+                        style={{ borderColor: 'var(--border-in)', color: 'var(--text-2)' }}>
                         Cancelar
                     </button>
                     <button onClick={handleConfirmar} disabled={!dinero || guardando}
-                        className="flex-1 px-4 py-2.5 rounded-lg bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors">
-                        {guardando ? 'Guardando…' : 'Confirmar'}
+                        className="flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 btn-press transition-colors"
+                        style={{ background: 'var(--primary)' }}
+                        onMouseEnter={e=>{ if(!guardando) e.currentTarget.style.background='var(--primary-hover)'; }}
+                        onMouseLeave={e=>e.currentTarget.style.background='var(--primary)'}>
+                        {guardando ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full spin"/> : 'Confirmar'}
                     </button>
                 </div>
             </div>
@@ -102,7 +108,8 @@ function FinalizarModal({ cita, onClose, onConfirmar }) {
 
 function CitaChip({ cita }) {
     return (
-        <div className="text-[10px] leading-tight bg-blue-100 text-blue-800 rounded px-1 py-0.5 truncate font-medium text-center">
+        <div className="text-[10px] leading-tight rounded px-1 py-0.5 truncate font-medium text-center"
+            style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
             {cita.appointment_time?.slice(0, 5)} {cita.client_name}
         </div>
     );
@@ -112,7 +119,7 @@ function CitaChip({ cita }) {
 
 function CitasPanel({ citas, titulo, onFinalizar }) {
     if (!citas.length) return (
-        <div className="flex flex-col items-center justify-center h-40 text-gray-400">
+        <div className="flex flex-col items-center justify-center h-40 animate-fade-in" style={{ color: 'var(--text-3)' }}>
             <Calendar size={32} className="mb-2 opacity-30" />
             <p className="text-sm">Sin citas este día</p>
         </div>
@@ -120,17 +127,20 @@ function CitasPanel({ citas, titulo, onFinalizar }) {
 
     return (
         <div className="space-y-2">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{titulo}</p>
-            {citas.map((cita) => (
+            <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--text-3)' }}>{titulo}</p>
+            {citas.map((cita, i) => (
                 <div key={cita.id}
-                    className="group flex items-start gap-3 p-3 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <User size={14} className="text-blue-600" />
+                    className={`group flex items-start gap-3 p-3 rounded-xl border transition-all animate-fade-up stagger-${i+1}`}
+                    style={{ borderColor: 'var(--border)' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--primary-medium)'; e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'transparent'; }}>
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--primary-light)' }}>
+                        <User size={14} style={{ color: 'var(--primary)' }} />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-800 text-sm truncate">{cita.client_name}</p>
-                        <p className="text-xs text-gray-500 truncate">{cita.service}</p>
-                        <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+                        <p className="font-semibold text-sm truncate" style={{ color: 'var(--text-1)' }}>{cita.client_name}</p>
+                        <p className="text-xs truncate mt-0.5" style={{ color: 'var(--text-2)' }}>{cita.service}</p>
+                        <div className="flex items-center gap-1 mt-1 text-xs" style={{ color: 'var(--text-3)' }}>
                             <Clock size={10} />
                             {cita.appointment_time?.slice(0, 5)}
                             <span className="mx-1">·</span>
@@ -139,7 +149,10 @@ function CitasPanel({ citas, titulo, onFinalizar }) {
                     </div>
                     <button
                         onClick={() => onFinalizar(cita)}
-                        className="flex-shrink-0 opacity-0 group-hover:opacity-100 bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded-lg transition-all font-medium">
+                        className="flex-shrink-0 opacity-0 group-hover:opacity-100 text-white text-xs px-2 py-1.5 rounded-lg transition-all font-semibold btn-press"
+                        style={{ background: '#10b981' }} // emerald-500
+                        onMouseEnter={e=>e.currentTarget.style.background='#059669'} // emerald-600
+                        onMouseLeave={e=>e.currentTarget.style.background='#10b981'}>
                         Finalizar
                     </button>
                 </div>
@@ -177,11 +190,11 @@ function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
     for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
     return (
-        <div>
+        <div className="animate-fade-in">
             {/* Cabecera días */}
             <div className="grid grid-cols-7 mb-1">
                 {DAYS_ES.map((d) => (
-                    <div key={d} className="text-center text-xs font-semibold text-gray-400 py-2">{d}</div>
+                    <div key={d} className="text-center text-xs font-semibold py-2" style={{ color: 'var(--text-3)' }}>{d}</div>
                 ))}
             </div>
             {/* Celdas */}
@@ -196,15 +209,18 @@ function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
 
                     return (
                         <button key={key} onClick={() => onSelectDay(dateObj)}
-                            className={`
-                                relative flex flex-col min-h-[80px] p-1.5 rounded-xl border text-left transition-all
-                                ${isSelected ? 'border-blue-400 bg-blue-50 shadow-sm' : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'}
-                                ${isToday && !isSelected ? 'border-blue-300 bg-blue-50/40' : ''}
-                            `}>
-                            <span className={`
-                                text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1
-                                ${isToday ? 'bg-blue-600 text-white' : 'text-gray-700'}
-                            `}>
+                            className="relative flex flex-col min-h-[80px] p-1.5 rounded-xl border text-left transition-all"
+                            style={{
+                                borderColor: isSelected ? 'var(--primary-medium)' : 'var(--border)',
+                                background: isSelected ? 'var(--primary-light)' : (isToday ? 'var(--bg-hover)' : 'transparent')
+                            }}
+                            onMouseEnter={e => { if(!isSelected) { e.currentTarget.style.borderColor = 'var(--primary-ring)'; e.currentTarget.style.background = 'var(--bg-hover)'; } }}
+                            onMouseLeave={e => { if(!isSelected) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = isToday ? 'var(--bg-hover)' : 'transparent'; } }}>
+                            <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1`}
+                                style={{
+                                    background: isToday ? 'var(--primary)' : 'transparent',
+                                    color: isToday ? 'white' : 'var(--text-1)'
+                                }}>
                                 {day}
                             </span>
                             <div className="flex-1 flex flex-col justify-center space-y-0.5 w-full overflow-hidden pb-1">
@@ -212,7 +228,7 @@ function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
                                     <CitaChip key={c.id} cita={c} />
                                 ))}
                                 {dayCitas.length > 2 && (
-                                    <div className="text-[10px] text-gray-400 font-medium pl-1 text-center">
+                                    <div className="text-[10px] font-medium pl-1 text-center" style={{ color: 'var(--text-3)' }}>
                                         +{dayCitas.length - 2} más
                                     </div>
                                 )}
@@ -246,7 +262,7 @@ function WeekView({ weekStart, appointments, selectedDay, onSelectDay }) {
     }, [appointments]);
 
     return (
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-1 animate-fade-in">
             {days.map((dateObj) => {
                 const key = isoDate(dateObj);
                 const dayCitas = citasByDay[key] ?? [];
@@ -255,33 +271,36 @@ function WeekView({ weekStart, appointments, selectedDay, onSelectDay }) {
 
                 return (
                     <button key={key} onClick={() => onSelectDay(dateObj)}
-                        className={`
-                            flex flex-col min-h-[140px] p-2 rounded-xl border text-left transition-all
-                            ${isSelected ? 'border-blue-400 bg-blue-50 shadow-sm' : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'}
-                            ${isToday && !isSelected ? 'border-blue-300 bg-blue-50/40' : ''}
-                        `}>
+                        className="flex flex-col min-h-[140px] p-2 rounded-xl border text-left transition-all"
+                        style={{
+                            borderColor: isSelected ? 'var(--primary-medium)' : 'var(--border)',
+                            background: isSelected ? 'var(--primary-light)' : (isToday ? 'var(--bg-hover)' : 'transparent')
+                        }}
+                        onMouseEnter={e => { if(!isSelected) { e.currentTarget.style.borderColor = 'var(--primary-ring)'; e.currentTarget.style.background = 'var(--bg-hover)'; } }}
+                        onMouseLeave={e => { if(!isSelected) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = isToday ? 'var(--bg-hover)' : 'transparent'; } }}>
                         {/* Header día */}
                         <div className="flex flex-col items-center mb-2">
-                            <span className="text-[10px] font-semibold text-gray-400 uppercase">
+                            <span className="text-[10px] font-semibold uppercase" style={{ color: 'var(--text-3)' }}>
                                 {DAYS_ES[(dateObj.getDay() + 6) % 7]}
                             </span>
-                            <span className={`
-                                text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full
-                                ${isToday ? 'bg-blue-600 text-white' : 'text-gray-800'}
-                            `}>
+                            <span className="text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full mt-0.5"
+                                style={{
+                                    background: isToday ? 'var(--primary)' : 'transparent',
+                                    color: isToday ? 'white' : 'var(--text-1)'
+                                }}>
                                 {dateObj.getDate()}
                             </span>
                         </div>
                         {/* Citas */}
                         <div className="flex-1 flex flex-col justify-center space-y-1 w-full pb-2">
                             {dayCitas.map((c) => (
-                                <div key={c.id} className="bg-blue-100 text-blue-800 rounded-lg px-1.5 py-1 text-center">
+                                <div key={c.id} className="rounded-lg px-1.5 py-1 text-center" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
                                     <p className="text-[10px] font-bold leading-tight">{c.appointment_time?.slice(0, 5)}</p>
                                     <p className="text-[10px] leading-tight truncate">{c.client_name}</p>
                                 </div>
                             ))}
                             {!dayCitas.length && (
-                                <p className="text-[10px] text-gray-300 text-center pt-2">—</p>
+                                <p className="text-[10px] text-center pt-2" style={{ color: 'var(--text-3)' }}>—</p>
                             )}
                         </div>
                     </button>
@@ -376,43 +395,54 @@ export default function AppointmentsPage() {
 
     return (
         <>
-            <div className="flex gap-5 h-full">
+            <div className="flex flex-col lg:flex-row gap-5 h-full">
                 {/* ── Calendario ─────────────────────────────────── */}
-                <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div className="flex-1 rounded-2xl shadow-sm border overflow-hidden flex flex-col animate-fade-up card-base"
+                    style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
 
                     {/* Header */}
-                    <div className="p-5 border-b border-gray-100 flex items-center justify-between gap-3">
+                    <div className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border-b" style={{ borderColor: 'var(--border)' }}>
                         {/* Navegación */}
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={viewMode === 'month' ? prevMonth : prevWeek}
-                                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-600">
+                                className="p-1.5 rounded-lg transition-colors btn-press"
+                                style={{ color: 'var(--text-2)' }}
+                                onMouseEnter={e=>e.currentTarget.style.background='var(--bg-hover)'}
+                                onMouseLeave={e=>e.currentTarget.style.background=''}>
                                 <ChevronLeft size={18} />
                             </button>
-                            <h2 className="text-base font-bold text-gray-900 min-w-[200px] text-center capitalize">
+                            <h2 className="text-base font-bold min-w-[200px] text-center capitalize" style={{ color: 'var(--text-1)' }}>
                                 {headerTitle}
                             </h2>
                             <button
                                 onClick={viewMode === 'month' ? nextMonth : nextWeek}
-                                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-600">
+                                className="p-1.5 rounded-lg transition-colors btn-press"
+                                style={{ color: 'var(--text-2)' }}
+                                onMouseEnter={e=>e.currentTarget.style.background='var(--bg-hover)'}
+                                onMouseLeave={e=>e.currentTarget.style.background=''}>
                                 <ChevronRight size={18} />
                             </button>
                         </div>
 
                         {/* Controles derecha */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-center gap-2">
                             {/* Toggle mes/semana */}
-                            <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+                            <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: 'var(--border)' }}>
                                 <button
                                     onClick={() => setViewMode('month')}
-                                    className={`px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-colors
-                                        ${viewMode === 'month' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                    className="px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                                    style={viewMode === 'month' ? { background: 'var(--primary)', color: 'white' } : { background: 'transparent', color: 'var(--text-2)' }}
+                                    onMouseEnter={e=>{ if(viewMode!=='month') e.currentTarget.style.background='var(--bg-hover)'; }}
+                                    onMouseLeave={e=>{ if(viewMode!=='month') e.currentTarget.style.background=''; }}>
                                     <LayoutGrid size={13} /> Mes
                                 </button>
                                 <button
                                     onClick={() => setViewMode('week')}
-                                    className={`px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-colors
-                                        ${viewMode === 'week' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                    className="px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                                    style={viewMode === 'week' ? { background: 'var(--primary)', color: 'white' } : { background: 'transparent', color: 'var(--text-2)' }}
+                                    onMouseEnter={e=>{ if(viewMode!=='week') e.currentTarget.style.background='var(--bg-hover)'; }}
+                                    onMouseLeave={e=>{ if(viewMode!=='week') e.currentTarget.style.background=''; }}>
                                     <Calendar size={13} /> Semana
                                 </button>
                             </div>
@@ -420,24 +450,30 @@ export default function AppointmentsPage() {
                             {/* Hoy */}
                             <button
                                 onClick={() => { setCurrentDate(today); setSelectedDay(today); }}
-                                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                                className="px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors btn-press"
+                                style={{ borderColor: 'var(--border)', color: 'var(--text-2)' }}
+                                onMouseEnter={e=>e.currentTarget.style.background='var(--bg-hover)'}
+                                onMouseLeave={e=>e.currentTarget.style.background=''}>
                                 Hoy
                             </button>
 
                             {/* Nueva cita */}
                             <button
                                 onClick={() => setMostrarNuevaCita(true)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-colors">
+                                className="text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-colors btn-press"
+                                style={{ background: 'var(--primary)' }}
+                                onMouseEnter={e=>e.currentTarget.style.background='var(--primary-hover)'}
+                                onMouseLeave={e=>e.currentTarget.style.background='var(--primary)'}>
                                 <Plus size={14} /> Nueva cita
                             </button>
                         </div>
                     </div>
 
                     {/* Cuerpo calendario */}
-                    <div className="p-4 flex-1 flex flex-col justify-center overflow-auto">
+                    <div className="p-4 flex-1 flex flex-col justify-center overflow-auto min-h-[400px]">
                         {loading ? (
                             <div className="flex items-center justify-center h-40">
-                                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                                <div className="w-6 h-6 border-2 border-t-transparent rounded-full spin" style={{ borderColor: 'var(--primary)' }} />
                             </div>
                         ) : viewMode === 'month' ? (
                             <MonthView
@@ -458,14 +494,15 @@ export default function AppointmentsPage() {
                 </div>
 
                 {/* ── Panel lateral: citas ────────────────────────── */}
-                <div className="w-80 flex-shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div className="p-5 border-b border-gray-100">
-                        <h3 className="font-bold text-gray-900 text-sm capitalize">{panelTitulo}</h3>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                <div className="w-full lg:w-80 flex-shrink-0 rounded-2xl shadow-sm border flex flex-col animate-fade-up card-base"
+                    style={{ background: 'var(--bg-card)', borderColor: 'var(--border)', animationDelay: '0.1s' }}>
+                    <div className="p-5 border-b" style={{ borderColor: 'var(--border)' }}>
+                        <h3 className="font-bold text-sm capitalize" style={{ color: 'var(--text-1)' }}>{panelTitulo}</h3>
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--text-3)' }}>
                             {panelCitas.length} {panelCitas.length === 1 ? 'cita' : 'citas'}
                         </p>
                     </div>
-                    <div className="p-4 flex-1 overflow-auto">
+                    <div className="p-4 flex-1 overflow-auto max-h-[500px]">
                         <CitasPanel
                             citas={panelCitas}
                             titulo={viewMode === 'week' ? 'Esta semana' : ''}
