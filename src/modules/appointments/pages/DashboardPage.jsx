@@ -14,10 +14,18 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 const MONTHS_ES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
 function isoDate(d) {
     if (!d) return '';
     const dt = new Date(d);
-    return isNaN(dt.getTime()) ? '' : dt.toISOString().split('T')[0];
+    if (isNaN(dt.getTime())) return '';
+    if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}/.test(d)) {
+        return d.slice(0, 10);
+    }
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, '0');
+    const day = String(dt.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
 }
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────
@@ -70,7 +78,13 @@ function CustomTooltip({ active, payload, label }) {
 
 // ─── Próximas citas ───────────────────────────────────────────────────────
 function ProximasCitas({ appointments }) {
-    const today = isoDate(new Date());
+    const today = (() => {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    })();
     const list = useMemo(() =>
         appointments.filter(a => isoDate(a.appointment_date) >= today).slice(0, 5),
         [appointments, today]
