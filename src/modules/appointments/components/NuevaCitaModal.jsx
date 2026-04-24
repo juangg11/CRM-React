@@ -10,12 +10,12 @@ const SERVICIOS = [
 const TODAS_LAS_HORAS = Array.from({ length: 22 }, (_, i) => {
     const h = Math.floor(i / 2) + 9; // 09:00 a 19:30
     const m = i % 2 === 0 ? '00' : '30';
-    return `${String(h).padStart(2,'0')}:${m}`;
+    return `${String(h).padStart(2, '0')}:${m}`;
 });
 
 export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appointments = [] }) {
     const { clientes } = useClients();
-    
+
     // ─── Estado del formulario ────────────────────────────────────────────────
     const [form, setForm] = useState({
         customer_id: null,
@@ -26,7 +26,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
         time: '',
     });
     const [guardando, setGuardando] = useState(false);
-    const [errors, setErrors]       = useState({});
+    const [errors, setErrors] = useState({});
 
     // ─── Buscador de clientes ─────────────────────────────────────────────────
     const [searchClient, setSearchClient] = useState('');
@@ -60,10 +60,10 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
     // ─── Lógica de horas disponibles ──────────────────────────────────────────
     const horasDisponibles = useMemo(() => {
         if (!form.date) return [];
-        
+
         const now = new Date();
         const isToday = form.date === now.toISOString().split('T')[0];
-        const currentHourMin = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        const currentHourMin = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
         // Citas ocupadas en la fecha seleccionada
         const ocupadas = appointments
@@ -78,7 +78,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
         return TODAS_LAS_HORAS.map(hora => {
             let disabled = false;
             let reason = '';
-            
+
             if (isToday && hora < currentHourMin) {
                 disabled = true;
                 reason = 'Hora pasada';
@@ -86,12 +86,11 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                 disabled = true;
                 reason = 'Ocupada';
             }
-            
+
             return { hora, disabled, reason };
         });
     }, [form.date, appointments]);
 
-    // Autoseleccionar primera hora disponible si la actual no es válida
     useEffect(() => {
         if (!form.date) return;
         const currentHoraStatus = horasDisponibles.find(h => h.hora === form.time);
@@ -102,7 +101,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
     }, [form.date, horasDisponibles]);
 
     // ─── Utilidades ───────────────────────────────────────────────────────────
-    const set = (k, v) => { setForm(p=>({...p,[k]:v})); setErrors(p=>({...p,[k]:undefined})); };
+    const set = (k, v) => { setForm(p => ({ ...p, [k]: v })); setErrors(p => ({ ...p, [k]: undefined })); };
 
     const validate = () => {
         const e = {};
@@ -142,7 +141,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                     </div>
                     <button onClick={onClose}
                         className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors btn-press">
-                        <X size={16}/>
+                        <X size={16} />
                     </button>
                 </div>
 
@@ -155,9 +154,9 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                             Cliente <span className="text-red-400">*</span>
                         </label>
                         <div className="relative">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-3)' }}/>
-                            <input 
-                                type="text" 
+                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-3)' }} />
+                            <input
+                                type="text"
                                 placeholder="Buscar o crear cliente..."
                                 value={searchClient}
                                 onChange={e => {
@@ -171,7 +170,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                                 className={fieldClass(errors.client_name)}
                             />
                         </div>
-                        
+
                         {/* Dropdown Clientes */}
                         {showClientDropdown && (
                             <div className="absolute z-10 w-full mt-1 rounded-xl shadow-lg border overflow-hidden animate-fade-up max-h-48 overflow-y-auto"
@@ -180,7 +179,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                                     <ul className="py-1">
                                         {clientesFiltrados.map(c => (
                                             <li key={c.id}>
-                                                <button 
+                                                <button
                                                     onClick={() => seleccionarCliente(c)}
                                                     className="w-full text-left px-4 py-2 text-sm transition-colors flex flex-col"
                                                     style={{ color: 'var(--text-1)' }}
@@ -195,7 +194,7 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                                     </ul>
                                 ) : (
                                     <div className="px-4 py-3 text-sm text-center" style={{ color: 'var(--text-3)' }}>
-                                        No se encontró cliente. <br/>
+                                        No se encontró cliente. <br />
                                         <span className="text-xs mt-1 block">Se registrará uno nuevo con este nombre.</span>
                                     </div>
                                 )}
@@ -213,18 +212,18 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                             Servicio <span className="text-red-400">*</span>
                         </label>
                         <div className="relative">
-                            <Scissors size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-3)' }}/>
-                            <select value={form.service} onChange={e=>set('service',e.target.value)}
+                            <Scissors size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-3)' }} />
+                            <select value={form.service} onChange={e => set('service', e.target.value)}
                                 className={`${fieldClass(errors.service)} appearance-none`}
                                 style={{ background: 'var(--bg-input)' }}>
                                 <option value="">Seleccionar servicio…</option>
-                                {SERVICIOS.map(s=><option key={s} value={s}>{s}</option>)}
+                                {SERVICIOS.map(s => <option key={s} value={s}>{s}</option>)}
                             </select>
                         </div>
-                        {form.service==='Otro' && (
+                        {form.service === 'Otro' && (
                             <input type="text" placeholder="Especifica el servicio…"
-                                value={form.servicioCustom} onChange={e=>set('servicioCustom',e.target.value)}
-                                className="input-base theme-ring w-full px-4 py-2.5 rounded-xl text-sm mt-2"/>
+                                value={form.servicioCustom} onChange={e => set('servicioCustom', e.target.value)}
+                                className="input-base theme-ring w-full px-4 py-2.5 rounded-xl text-sm mt-2" />
                         )}
                         {errors.service && <p className="text-xs text-red-500 mt-1">{errors.service}</p>}
                     </div>
@@ -235,14 +234,14 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                             Fecha <span className="text-red-400">*</span>
                         </label>
                         <div className="relative">
-                            <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-3)' }}/>
-                            <input type="date" value={form.date} onChange={e=>set('date',e.target.value)}
+                            <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-3)' }} />
+                            <input type="date" value={form.date} onChange={e => set('date', e.target.value)}
                                 min={new Date().toISOString().split('T')[0]}
-                                className={`${fieldClass(errors.date)} pr-2`}/>
+                                className={`${fieldClass(errors.date)} pr-2`} />
                         </div>
                         {errors.date && <p className="text-xs text-red-500 mt-1">{errors.date}</p>}
                     </div>
-                    
+
                     {/* Hora Grid */}
                     <div>
                         <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5 flex items-center justify-between" style={{ color: 'var(--text-3)' }}>
@@ -260,12 +259,12 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                                         onClick={() => set('time', hora)}
                                         title={reason}
                                         className={`py-2 rounded-lg text-xs font-bold transition-all ${disabled ? 'opacity-40 cursor-not-allowed' : 'btn-press'}`}
-                                        style={isSelected 
-                                            ? { background: 'var(--primary)', color: 'white', boxShadow: '0 0 0 2px var(--primary-ring)' } 
+                                        style={isSelected
+                                            ? { background: 'var(--primary)', color: 'white', boxShadow: '0 0 0 2px var(--primary-ring)' }
                                             : { background: 'var(--bg-input)', color: 'var(--text-1)', border: '1px solid var(--border-in)' }
                                         }
-                                        onMouseEnter={e => { if(!disabled && !isSelected) e.currentTarget.style.borderColor = 'var(--primary)'; }}
-                                        onMouseLeave={e => { if(!disabled && !isSelected) e.currentTarget.style.borderColor = 'var(--border-in)'; }}
+                                        onMouseEnter={e => { if (!disabled && !isSelected) e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                                        onMouseLeave={e => { if (!disabled && !isSelected) e.currentTarget.style.borderColor = 'var(--border-in)'; }}
                                     >
                                         <span className={disabled && reason === 'Ocupada' ? 'line-through' : ''}>{hora}</span>
                                     </button>
@@ -289,11 +288,11 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
                     <button onClick={handleGuardar} disabled={guardando || !form.time}
                         className="flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 btn-press transition-colors"
                         style={{ background: 'var(--primary)' }}
-                        onMouseEnter={e=>{ if(!guardando && form.time) e.currentTarget.style.background='var(--primary-hover)'; }}
-                        onMouseLeave={e=>e.currentTarget.style.background='var(--primary)'}>
+                        onMouseEnter={e => { if (!guardando && form.time) e.currentTarget.style.background = 'var(--primary-hover)'; }}
+                        onMouseLeave={e => e.currentTarget.style.background = 'var(--primary)'}>
                         {guardando
-                            ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full spin"/>
-                            : <><Check size={14}/> Guardar cita</>}
+                            ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full spin" />
+                            : <><Check size={14} /> Agendar cita</>}
                     </button>
                 </div>
             </div>

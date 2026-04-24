@@ -12,13 +12,17 @@ const DAYS_ES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-function isoDate(date) {
-    if (!date) return '';
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return '';
-    return d.toISOString().split('T')[0];
-}
+function isoDate(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    if (isNaN(dt.getTime())) return '';
 
+    return [
+        dt.getFullYear(),
+        String(dt.getMonth() + 1).padStart(2, '0'),
+        String(dt.getDate()).padStart(2, '0')
+    ].join('-');
+}
 function startOfWeek(date) {
     const d = new Date(date);
     const day = d.getDay(); // 0=dom
