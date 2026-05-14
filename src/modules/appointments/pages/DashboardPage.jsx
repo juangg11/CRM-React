@@ -12,7 +12,6 @@ import {
     Clock, ArrowUpRight, ArrowDownRight, Star
 } from 'lucide-react';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
 const MONTHS_ES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
 function isoDate(d) {
@@ -28,7 +27,6 @@ function isoDate(d) {
     return `${y}-${m}-${day}`;
 }
 
-// ─── KPI Card ─────────────────────────────────────────────────────────────
 function KpiCard({ icon: Icon, label, value, sub, color, trend, delay = 0 }) {
     const palettes = {
         green:  { bg: '#f0fdf4', icon: '#bbf7d0', txt: '#15803d' },
@@ -63,7 +61,6 @@ function KpiCard({ icon: Icon, label, value, sub, color, trend, delay = 0 }) {
     );
 }
 
-// ─── Tooltip chart ────────────────────────────────────────────────────────
 function CustomTooltip({ active, payload, label }) {
     if (!active || !payload?.length) return null;
     return (
@@ -76,7 +73,6 @@ function CustomTooltip({ active, payload, label }) {
     );
 }
 
-// ─── Próximas citas ───────────────────────────────────────────────────────
 function ProximasCitas({ appointments }) {
     const today = (() => {
         const now = new Date();
@@ -127,7 +123,6 @@ function ProximasCitas({ appointments }) {
     );
 }
 
-// ─── Clientes recientes ───────────────────────────────────────────────────
 const AV_COLORS = [
     'bg-blue-100 text-blue-700','bg-purple-100 text-purple-700',
     'bg-green-100 text-green-700','bg-amber-100 text-amber-700','bg-rose-100 text-rose-700',
@@ -159,7 +154,6 @@ function ClientesRecientes({ clientes }) {
     );
 }
 
-// ─── Panel card wrapper ───────────────────────────────────────────────────
 function Panel({ title, sub, icon: Icon, children, span = '', delay = 0 }) {
     return (
         <div className={`card-base p-5 flex flex-col animate-fade-up ${span}`}
@@ -176,7 +170,6 @@ function Panel({ title, sub, icon: Icon, children, span = '', delay = 0 }) {
     );
 }
 
-// ─── Dashboard ────────────────────────────────────────────────────────────
 export default function DashboardPage() {
     const { settings } = useSettings();
     const { datos, ventas, loading: lv } = useDashboard();
