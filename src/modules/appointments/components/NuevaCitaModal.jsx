@@ -16,7 +16,6 @@ const TODAS_LAS_HORAS = Array.from({ length: 22 }, (_, i) => {
 export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appointments = [] }) {
     const { clientes } = useClients();
 
-    // ─── Estado del formulario ────────────────────────────────────────────────
     const [form, setForm] = useState({
         customer_id: null,
         client_name: '',
@@ -28,12 +27,10 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
     const [guardando, setGuardando] = useState(false);
     const [errors, setErrors] = useState({});
 
-    // ─── Buscador de clientes ─────────────────────────────────────────────────
     const [searchClient, setSearchClient] = useState('');
     const [showClientDropdown, setShowClientDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
-    // Cierra el dropdown al hacer click fuera
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -57,7 +54,6 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
         setErrors(p => ({ ...p, client_name: undefined }));
     };
 
-    // ─── Lógica de horas disponibles ──────────────────────────────────────────
     const horasDisponibles = useMemo(() => {
         if (!form.date) return [];
 
@@ -65,7 +61,6 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
         const isToday = form.date === now.toISOString().split('T')[0];
         const currentHourMin = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-        // Citas ocupadas en la fecha seleccionada
         const ocupadas = appointments
             .filter(a => {
                 if (!a.appointment_date) return false;
@@ -100,7 +95,6 @@ export default function NuevaCitaModal({ onClose, onGuardar, defaultDate, appoin
         }
     }, [form.date, horasDisponibles]);
 
-    // ─── Utilidades ───────────────────────────────────────────────────────────
     const set = (k, v) => { setForm(p => ({ ...p, [k]: v })); setErrors(p => ({ ...p, [k]: undefined })); };
 
     const validate = () => {
