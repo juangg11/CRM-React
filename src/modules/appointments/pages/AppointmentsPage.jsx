@@ -6,8 +6,6 @@ import {
     Calendar, LayoutGrid, Clock, User, Scissors
 } from 'lucide-react';
 
-// ─── Helpers de fecha ─────────────────────────────────────────────────────────
-
 const DAYS_ES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -25,7 +23,7 @@ function isoDate(d) {
 }
 function startOfWeek(date) {
     const d = new Date(date);
-    const day = d.getDay(); // 0=dom
+    const day = d.getDay(); 
     const diff = day === 0 ? -6 : 1 - day; // lunes
     d.setDate(d.getDate() + diff);
     return d;
@@ -36,8 +34,6 @@ function sameDay(a, b) {
         a.getMonth() === b.getMonth() &&
         a.getDate() === b.getDate();
 }
-
-// ─── Modal finalizar ──────────────────────────────────────────────────────────
 
 function FinalizarModal({ cita, onClose, onConfirmar }) {
     const [dinero, setDinero] = useState('');
@@ -108,8 +104,6 @@ function FinalizarModal({ cita, onClose, onConfirmar }) {
     );
 }
 
-// ─── Chip de cita (en celda del calendario) ───────────────────────────────────
-
 function CitaChip({ cita }) {
     return (
         <div className="text-[10px] leading-tight rounded px-1 py-0.5 truncate font-medium text-center"
@@ -118,8 +112,6 @@ function CitaChip({ cita }) {
         </div>
     );
 }
-
-// ─── Panel lateral: citas del día / semana seleccionado ───────────────────────
 
 function CitasPanel({ citas, titulo, onFinalizar }) {
     if (!citas.length) return (
@@ -154,8 +146,8 @@ function CitasPanel({ citas, titulo, onFinalizar }) {
                     <button
                         onClick={() => onFinalizar(cita)}
                         className="flex-shrink-0 opacity-0 group-hover:opacity-100 text-white text-xs px-2 py-1.5 rounded-lg transition-all font-semibold btn-press"
-                        style={{ background: '#10b981' }} // emerald-500
-                        onMouseEnter={e=>e.currentTarget.style.background='#059669'} // emerald-600
+                        style={{ background: '#10b981' }}
+                        onMouseEnter={e=>e.currentTarget.style.background='#059669'}
                         onMouseLeave={e=>e.currentTarget.style.background='#10b981'}>
                         Finalizar
                     </button>
@@ -164,8 +156,6 @@ function CitasPanel({ citas, titulo, onFinalizar }) {
         </div>
     );
 }
-
-// ─── Vista Mes ────────────────────────────────────────────────────────────────
 
 function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
     const today = new Date();
@@ -241,8 +231,6 @@ function MonthView({ year, month, appointments, selectedDay, onSelectDay }) {
     );
 }
 
-// ─── Vista Semana ─────────────────────────────────────────────────────────────
-
 function WeekView({ weekStart, appointments, selectedDay, onSelectDay }) {
     const today = new Date();
     const days = Array.from({ length: 7 }, (_, i) => {
@@ -309,8 +297,6 @@ function WeekView({ weekStart, appointments, selectedDay, onSelectDay }) {
         </div>
     );
 }
-
-// ─── Página principal ─────────────────────────────────────────────────────────
 
 export default function AppointmentsPage() {
     const { appointments, loading, createAppointment, finalizarCita, sumVentas } = useAppointments();
@@ -388,7 +374,7 @@ export default function AppointmentsPage() {
     return (
         <>
             <div className="flex flex-col lg:flex-row gap-5 h-full">
-                {/* ── Calendario ─────────────────────────────────── */}
+                {/*  Calendario  */}
                 <div className="flex-1 rounded-2xl shadow-sm border overflow-hidden flex flex-col animate-fade-up card-base"
                     style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
 
@@ -485,7 +471,7 @@ export default function AppointmentsPage() {
                     </div>
                 </div>
 
-                {/* ── Panel lateral: citas ────────────────────────── */}
+                {/*  Panel lateral: citas  */}
                 <div className="w-full lg:w-80 flex-shrink-0 rounded-2xl shadow-sm border flex flex-col animate-fade-up card-base"
                     style={{ background: 'var(--bg-card)', borderColor: 'var(--border)', animationDelay: '0.1s' }}>
                     <div className="p-5 border-b" style={{ borderColor: 'var(--border)' }}>
