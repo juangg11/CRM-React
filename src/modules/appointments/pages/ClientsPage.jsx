@@ -5,7 +5,6 @@ import {
     Pencil, Trash2, Check, Users, AlertTriangle
 } from 'lucide-react';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
 const AVATAR_COLORS = [
     'bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700',
     'bg-green-100 text-green-700', 'bg-amber-100 text-amber-700',
@@ -21,7 +20,6 @@ function avatarColor(name = '') {
     return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
 }
 
-// ─── Modal Añadir / Editar ────────────────────────────────────────────────
 const EMPTY = { name: '', email: '', phone: '' };
 
 function ClienteModal({ cliente, onClose, onGuardar }) {
@@ -111,7 +109,6 @@ function ClienteModal({ cliente, onClose, onGuardar }) {
     );
 }
 
-// ─── Modal Confirmar eliminación ──────────────────────────────────────────
 function ConfirmarModal({ cliente, onClose, onConfirmar }) {
     const [deleting, setDeleting] = useState(false);
     const handle = async () => { setDeleting(true); await onConfirmar(cliente.id); setDeleting(false); onClose(); };
@@ -143,7 +140,6 @@ function ConfirmarModal({ cliente, onClose, onConfirmar }) {
     );
 }
 
-// ─── Tarjeta de cliente ───────────────────────────────────────────────────
 function ClienteCard({ cliente, onEditar, onEliminar, index }) {
     const color = avatarColor(cliente.name);
     return (
@@ -188,7 +184,6 @@ function ClienteCard({ cliente, onEditar, onEliminar, index }) {
     );
 }
 
-// ─── Página principal ─────────────────────────────────────────────────────
 export default function ClientsPage() {
     const { clientes, loading, createCliente, updateCliente, deleteCliente } = useClients();
     const [busqueda, setBusqueda]         = useState('');
